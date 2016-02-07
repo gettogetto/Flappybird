@@ -24,12 +24,10 @@ bool StartScene::init(){
 	CCSize visibleSize = CCDirector::sharedDirector()->getVisibleSize();
     CCPoint origin = CCDirector::sharedDirector()->getVisibleOrigin();
 	//Ô¤¼ÓÔØÒôÐ§
-	CocosDenshion::SimpleAudioEngine::sharedEngine()->preloadEffect("sfx_wing.mp3");
-	CocosDenshion::SimpleAudioEngine::sharedEngine()->preloadEffect("sfx_wing.mp3");
-	CocosDenshion::SimpleAudioEngine::sharedEngine()->preloadEffect("sfx_point.mp3");
-	CocosDenshion::SimpleAudioEngine::sharedEngine()->preloadEffect("sfx_hit.mp3");
-	CocosDenshion::SimpleAudioEngine::sharedEngine()->preloadEffect("sfx_die.mp3");
-	CocosDenshion::SimpleAudioEngine::sharedEngine()->preloadEffect("sfx_swooshing.mp3");
+	CocosDenshion::SimpleAudioEngine::sharedEngine()->preloadEffect("sfx_wing.wav");
+	CocosDenshion::SimpleAudioEngine::sharedEngine()->preloadEffect("sfx_point.wav");
+	CocosDenshion::SimpleAudioEngine::sharedEngine()->preloadEffect("sfx_hit.wav");
+	CocosDenshion::SimpleAudioEngine::sharedEngine()->preloadEffect("sfx_die.wav");
 	//±³¾°
 	background = CCSprite::create("bg_night.png");//288*512
     background->setPosition(ccp(visibleSize.width/2 + origin.x, visibleSize.height/2 + origin.y));

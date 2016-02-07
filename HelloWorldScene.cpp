@@ -111,7 +111,7 @@ bool HelloWorld::init()
 void HelloWorld::calScore(){
 	if(int(pipe_up1->getPositionX())==int(bird0_0->getPositionX())||
 		int(pipe_up2->getPositionX())==int(bird0_0->getPositionX())){
-			//SimpleAudioEngine::sharedEngine()->playEffect("sfx_point.mp3");
+			SimpleAudioEngine::sharedEngine()->playEffect("sfx_point.wav");
 			score++;
 	}
 }
@@ -185,9 +185,9 @@ bool HelloWorld::isCollideWithLand(){
 //屏幕触摸开始
 bool HelloWorld::ccTouchBegan(CCTouch* pTouch,CCEvent* pEvent){
 	//CCLOG("HelloWorldScene touch! ");
-	//SimpleAudioEngine::sharedEngine()->playEffect("sfx_wing.mp3");
+	SimpleAudioEngine::sharedEngine()->playEffect("sfx_wing.wav");
 	if(firstTouch==false){
-		this->scheduleUpdate();//每一帧刷新
+		this->scheduleUpdate();//开始每一帧刷新
 		firstTouch=true;
 	}
 	tutorial->setVisible(false);
@@ -275,8 +275,8 @@ void HelloWorld::update(float delta){
 	pScoreLabel->setString(CCString::createWithFormat("%d",score)->getCString());
 	//碰撞检测
 	if(isCollideWithPipe()||isCollideWithLand()){
-		//SimpleAudioEngine::sharedEngine()->playEffect("sfx_hit.mp3");
-		//SimpleAudioEngine::sharedEngine()->playEffect("sfx_die.mp3");
+		SimpleAudioEngine::sharedEngine()->playEffect("sfx_hit.wav");
+		
 		gameOver();
 	}
 }
@@ -294,11 +294,13 @@ void HelloWorld::gameOver(){
 		CCRotateTo* rotateto=CCRotateTo::create(0.1f,90,90);
 		CCEaseIn* easein2=CCEaseIn::create(rotateto,1.7f);//加速下落
 		pAction=CCSpawn::create(easein,easein2,NULL);
+		SimpleAudioEngine::sharedEngine()->playEffect("sfx_die.wav");
 	}
 	else if(isCollideWithLand()){
 		pAction=CCRotateTo::create(0.0f,90,90);
 	}else;
 	bird0_0->runAction(pAction);
+	
 	showScoreBoard();
 	score=0;//分数清零
 }
