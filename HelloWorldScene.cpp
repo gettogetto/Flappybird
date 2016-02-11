@@ -39,9 +39,9 @@ bool HelloWorld::init()
 
 	//分数
 	score=0;
-	pScoreLabel = CCLabelTTF::create("0", "Arial", 24);
-	pScoreLabel->setPosition(ccp(origin.x + visibleSize.width/2,origin.y + visibleSize.height/2+130));
-	this->addChild(pScoreLabel,1);
+	//pScoreLabel = CCLabelTTF::create("0", "Arial", 24);
+	//pScoreLabel->setPosition(ccp(origin.x + visibleSize.width/2,origin.y + visibleSize.height/2+130));
+	//this->addChild(pScoreLabel,1);
 	//背景
     background = CCSprite::create("bg_day.png");//288*512
     background->setPosition(ccp(visibleSize.width/2 + origin.x, visibleSize.height/2 + origin.y));
@@ -84,15 +84,12 @@ bool HelloWorld::init()
 
 	pipe_distace=visibleSize.width/2+pipe_down1->getContentSize().width/2.0f;//管道水平间距
 	
-
 	pipe_up2=CCSprite::create("pipe_up.png");
 	pipe_up2->setPosition(ccp(origin.x + visibleSize.width+pipe_distace+firstdistance,origin.y+15+CCRANDOM_0_1()*200));
 	this->addChild(pipe_up2,0);
 	pipe_down2=CCSprite::create("pipe_down.png");
 	pipe_down2->setPosition(ccp(origin.x + visibleSize.width+pipe_distace+firstdistance,pipe_up2->getPositionY()+pipe_highdistance));
 	this->addChild(pipe_down2,0);
-
-
 	//地
     land1 = CCSprite::create("land.png");//336*112
 	CCSize landSize=land1->getContentSize();//图片大小
@@ -101,9 +98,22 @@ bool HelloWorld::init()
     land2 = CCSprite::create("land.png");//336*112
     land2->setPosition(ccp(origin.x+landSize.width*3/2, origin.y+landSize.height/2));
     this->addChild(land2, 0);
-	///////////////////////////////////////////////
+	//分数
+	score0001=CCSprite::create();
+	score0010=CCSprite::create();
+	score0100=CCSprite::create();
+	score1000=CCSprite::create();
+
+	score0001->setPosition(ccp(origin.x + visibleSize.width/2,origin.y + visibleSize.height/2+130));
+	this->addChild(score0001,1);
+	score0010->setPosition(ccp(origin.x + visibleSize.width/2-25,origin.y + visibleSize.height/2+130));
+	this->addChild(score0010,1);
+	score0100->setPosition(ccp(origin.x + visibleSize.width/2-50,origin.y + visibleSize.height/2+130));
+	this->addChild(score0100,1);
+	score1000->setPosition(ccp(origin.x + visibleSize.width/2-75,origin.y + visibleSize.height/2+130));
+	this->addChild(score1000,1);
+	//
 	this->setTouchEnabled(true);//接受屏幕触摸事件
-	
 	this->unscheduleUpdate();//不更新帧
     return true;
 }
@@ -113,6 +123,21 @@ void HelloWorld::calScore(){
 		int(pipe_up2->getPositionX())==int(bird0_0->getPositionX())){
 			SimpleAudioEngine::sharedEngine()->playEffect("sfx_point.wav");
 			score++;
+			unsigned int s0001,s0010,s0100,s1000;
+			s0001=score%10;
+			s0010=score/10%10;
+			s0100=score/100%10;
+			s1000=score/1000;
+			score0001->initWithFile(CCString::createWithFormat("font_0%d.png",s0001+48)->getCString());
+			if(score>=10){
+				score0010->initWithFile(CCString::createWithFormat("font_0%d.png",s0010+48)->getCString());
+			}
+			if(score>=100){
+				score0100->initWithFile(CCString::createWithFormat("font_0%d.png",s0100+48)->getCString());
+			}
+			if(score>=1000){
+				score1000->initWithFile(CCString::createWithFormat("font_0%d.png",s1000+48)->getCString());
+			}
 	}
 }
 //制作扇动翅膀动作
@@ -185,14 +210,16 @@ bool HelloWorld::isCollideWithLand(){
 //屏幕触摸开始
 bool HelloWorld::ccTouchBegan(CCTouch* pTouch,CCEvent* pEvent){
 	//CCLOG("HelloWorldScene touch! ");
+	bird0_0->stopAction(pAction);
 	SimpleAudioEngine::sharedEngine()->playEffect("sfx_wing.wav");
 	if(firstTouch==false){
 		this->scheduleUpdate();//开始每一帧刷新
 		firstTouch=true;
+		tutorial->removeFromParent();
+		text_ready->removeFromParent();
+		
 	}
-	tutorial->setVisible(false);
-	text_ready->setVisible(false);
-	bird0_0->stopAction(pAction);
+
 	CCMoveBy* moveby=CCMoveBy::create(0.16f,ccp(0,85));
 	CCEaseOut* easeout=CCEaseOut::create(moveby,1.5);
 	CCRotateTo* rotateto=CCRotateTo::create(0.05f,-30,-30);
@@ -219,13 +246,21 @@ void HelloWorld::ccTouchEnded(CCTouch* pTouch,CCEvent* pEvent){
 	pAction=CCSpawn::create(swingAction,easein,easein2,NULL);
 	bird0_0->runAction(pAction);
 	
-	CCLOG("%d",score);
+	//CCLOG("%d",score);
 }
 void HelloWorld::registerWithTouchDispatcher(void){
 	//CCLayer::registerWithTouchDispatcher();
 	CCDirector::sharedDirector()->getTouchDispatcher()->addTargetedDelegate(this,0,true);
 }
 void HelloWorld::update(float delta){
+
+	//碰撞检测
+	if(isCollideWithPipe()||isCollideWithLand()){
+		SimpleAudioEngine::sharedEngine()->playEffect("sfx_hit.wav");
+		
+		gameOver();
+		return;
+	}
 	//交替出现形成地图无限的假像
 	//更新土地
 	float landx1=land1->getPositionX();
@@ -272,19 +307,16 @@ void HelloWorld::update(float delta){
 	pipe_up2->setPositionY(pipey2);
 	//更新分数
 	calScore();
-	pScoreLabel->setString(CCString::createWithFormat("%d",score)->getCString());
-	//碰撞检测
-	if(isCollideWithPipe()||isCollideWithLand()){
-		SimpleAudioEngine::sharedEngine()->playEffect("sfx_hit.wav");
-		
-		gameOver();
-	}
+	//pScoreLabel->setString(CCString::createWithFormat("%d",score)->getCString());
+
+
+
 }
 void HelloWorld::gameOver(){
 	this->unscheduleUpdate();//关闭每一帧的update
 	this->setTouchEnabled(false);//关闭屏幕触摸监听
 	bird0_0->stopAction(pAction);//停止动作
-	pScoreLabel->setVisible(false);//隐藏计分
+
 	//根据碰撞情况选定鸟的动作
 	if(isCollideWithPipe()){
 		CCMoveTo* moveto=CCMoveTo::create(0.42f,
@@ -359,7 +391,7 @@ void HelloWorld::showScoreBoard(){
 	CCMoveTo* medalMoveTo=CCMoveTo::create(0.5f,ccp(origin.x+visibleSize.width/2-65,origin.y+visibleSize.height/2-5));
 	this->addChild(medal,1);
 	medal->runAction(medalMoveTo);	
-	//
+	//最高分
 	bestScore=CCLabelTTF::create(CCString::createWithFormat("%d",highestScore)->getCString(),"Arial", 20);
 	bestScore->setPosition(ccp(origin.x+visibleSize.width/2+75,origin.y-100));
 	bestScore->setColor(ccBLUE);
@@ -370,7 +402,6 @@ void HelloWorld::showScoreBoard(){
 	gameOverImage=CCSprite::create("text_game_over.png");
 	gameOverImage->setPosition(ccp(origin.x + visibleSize.width/2,origin.y + visibleSize.height/2+200));
 	this->addChild(gameOverImage,1);
-
 }
 //
 

@@ -46,7 +46,7 @@ public:
 private:
 	CCSize visibleSize;
 	CCPoint origin;
-	int score;
+	unsigned int score;
 	static int highestScore;
 	int rank;
 	int pipe_distace;
@@ -76,6 +76,8 @@ private:
 	CCSprite* scoreBoard;
 	CCSprite* medal;
 	CCControlButton* replayBtn;
+
+	CCSprite* score0001,*score0010,*score0100,*score1000;
 
 };
 
