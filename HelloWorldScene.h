@@ -21,6 +21,7 @@ public:
 	void showScoreBoard();
 	void calScore();
 	void gameOver();
+	static void saveBestScore();
 	CCAnimate* creatBirdAnimate();
 	CCRect getBird0_0Rect(float a,float b);
 	CCRect getPipedown1Rect();
@@ -29,13 +30,6 @@ public:
 	CCRect getPipeup2Rect();
 	bool isCollideWithPipe();
 	bool isCollideWithLand();
-	/*
-	//以下四个函数继承自CCLayer，复数表示可以被多个Layer截获
-    virtual void ccTouchesBegan(CCSet* pTouches,CCEvent* pEvent);//屏幕触摸开始
-	virtual void ccTouchesMoved(CCSet* pTouches,CCEvent* pEvent);//屏幕触摸移动
-	virtual void ccTouchesEnded(CCSet* pTouches,CCEvent* pEvent);//屏幕触摸结束
-	virtual void ccTouchesCancelled(CCSet* pTouches,CCEvent* pEvent);//打断触摸事件，系统级消息如来电话了
-	*/
 	virtual bool ccTouchBegan(CCTouch* pTouches,CCEvent* pEvent);//屏幕触摸开始
 	virtual void ccTouchMoved(CCTouch* pTouches,CCEvent* pEvent);//屏幕触摸移动
 	virtual void ccTouchEnded(CCTouch* pTouches,CCEvent* pEvent);//屏幕触摸结束
@@ -78,7 +72,6 @@ private:
 	CCControlButton* replayBtn;
 
 	CCSprite* score0001,*score0010,*score0100,*score1000;
-
 };
 
 #endif // __HELLOWORLD_SCENE_H__

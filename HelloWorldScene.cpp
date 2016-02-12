@@ -1,11 +1,12 @@
 #include "HelloWorldScene.h"
 #include "StartScene.h"
 #include "SimpleAudioEngine.h"
-int threeScore[3]={45,30,15};
-int HelloWorld::highestScore=0;
 using namespace CocosDenshion;//必须#include "SimpleAudioEngine.h"
 USING_NS_CC;
+
 bool HelloWorld::firstTouch=false;
+int threeScore[3]={45,30,15};
+int HelloWorld::highestScore=CCUserDefault::sharedUserDefault()->getIntegerForKey("bestScoreData",0);//获取存储的最高分
 CCScene* HelloWorld::scene()
 {
     // 'scene' is an autorelease object
@@ -24,8 +25,7 @@ CCScene* HelloWorld::scene()
 // on "init" you need to initialize your instance
 bool HelloWorld::init()
 {
-    //////////////////////////////
-    // 1. super init first
+
     if ( !CCLayer::init() )
     {
         return false;
@@ -33,15 +33,9 @@ bool HelloWorld::init()
     
     visibleSize = CCDirector::sharedDirector()->getVisibleSize();
     origin = CCDirector::sharedDirector()->getVisibleOrigin();
-    ////////////////////////////////////////////////////////////
-
-	///////////////////////////////////////////////////////////////////
 
 	//分数
 	score=0;
-	//pScoreLabel = CCLabelTTF::create("0", "Arial", 24);
-	//pScoreLabel->setPosition(ccp(origin.x + visibleSize.width/2,origin.y + visibleSize.height/2+130));
-	//this->addChild(pScoreLabel,1);
 	//背景
     background = CCSprite::create("bg_day.png");//288*512
     background->setPosition(ccp(visibleSize.width/2 + origin.x, visibleSize.height/2 + origin.y));
@@ -60,12 +54,7 @@ bool HelloWorld::init()
     bird0_0 = CCSprite::create("bird0_0.png");
 	bird0_0->setPosition(ccp(origin.x + visibleSize.width/3,origin.y + visibleSize.height/2));
 	this->addChild(bird0_0,1);
-    //小鸟初始画面上下浮动
-	//CCMoveBy* movebyup=CCMoveBy::create(0.85f,ccp(0,14));
-	//CCMoveBy* movebydown=CCMoveBy::create(0.85f,ccp(0,-14));
-	//CCSequence* sequence0=CCSequence::create(movebyup,movebydown,NULL);
 
-	//CCRepeatForever* pAction0=CCRepeatForever::create(sequence0);
 	CCAnimate* swingAction=creatBirdAnimate();//扇动翅膀
 
 	pAction=CCSpawn::create(swingAction,NULL);//同时发生
@@ -117,29 +106,7 @@ bool HelloWorld::init()
 	this->unscheduleUpdate();//不更新帧
     return true;
 }
-//更新分数
-void HelloWorld::calScore(){
-	if(int(pipe_up1->getPositionX())==int(bird0_0->getPositionX())||
-		int(pipe_up2->getPositionX())==int(bird0_0->getPositionX())){
-			SimpleAudioEngine::sharedEngine()->playEffect("sfx_point.wav");
-			score++;
-			unsigned int s0001,s0010,s0100,s1000;
-			s0001=score%10;
-			s0010=score/10%10;
-			s0100=score/100%10;
-			s1000=score/1000;
-			score0001->initWithFile(CCString::createWithFormat("font_0%d.png",s0001+48)->getCString());
-			if(score>=10){
-				score0010->initWithFile(CCString::createWithFormat("font_0%d.png",s0010+48)->getCString());
-			}
-			if(score>=100){
-				score0100->initWithFile(CCString::createWithFormat("font_0%d.png",s0100+48)->getCString());
-			}
-			if(score>=1000){
-				score1000->initWithFile(CCString::createWithFormat("font_0%d.png",s1000+48)->getCString());
-			}
-	}
-}
+
 //制作扇动翅膀动作
 CCAnimate* HelloWorld::creatBirdAnimate(){
 	int iFrameNum=3;
@@ -206,7 +173,6 @@ bool HelloWorld::isCollideWithLand(){
 	return isBlowland;
 }
 
-
 //屏幕触摸开始
 bool HelloWorld::ccTouchBegan(CCTouch* pTouch,CCEvent* pEvent){
 	//CCLOG("HelloWorldScene touch! ");
@@ -236,7 +202,7 @@ void HelloWorld::ccTouchMoved(CCTouch* pTouch,CCEvent* pEvent){
 }
 //屏幕触摸结束
 void HelloWorld::ccTouchEnded(CCTouch* pTouch,CCEvent* pEvent){
-	//CCLOG("HelloWorldScene touch! Ended!");
+
 	bird0_0->stopAction(pAction);
 	CCMoveTo* moveto=CCMoveTo::create(1.2f,ccp(bird0_0->getPositionX(),-210));
 	CCEaseIn* easein=CCEaseIn::create(moveto,2.4f);
@@ -307,11 +273,47 @@ void HelloWorld::update(float delta){
 	pipe_up2->setPositionY(pipey2);
 	//更新分数
 	calScore();
-	//pScoreLabel->setString(CCString::createWithFormat("%d",score)->getCString());
-
-
-
 }
+//更新分数
+void HelloWorld::calScore(){
+	if(int(pipe_up1->getPositionX())==int(bird0_0->getPositionX())||
+		int(pipe_up2->getPositionX())==int(bird0_0->getPositionX())){
+			SimpleAudioEngine::sharedEngine()->playEffect("sfx_point.wav");
+			score++;
+			unsigned int s0001,s0010,s0100,s1000;
+			s0001=score%10;
+			s0010=score/10%10;
+			s0100=score/100%10;
+			s1000=score/1000;
+			score0001->initWithFile(CCString::createWithFormat("font_0%d.png",s0001+48)->getCString());
+			if(score>=10){
+				score0010->initWithFile(CCString::createWithFormat("font_0%d.png",s0010+48)->getCString());
+			}
+			if(score>=100){
+				score0100->initWithFile(CCString::createWithFormat("font_0%d.png",s0100+48)->getCString());
+			}
+			if(score>=1000){
+				score1000->initWithFile(CCString::createWithFormat("font_0%d.png",s1000+48)->getCString());
+			}
+	}
+}
+///////////////////////////
+void HelloWorld::saveBestScore(){
+	//判断数据
+	int tmp=CCUserDefault::sharedUserDefault()->getIntegerForKey("bestScoreData",0);
+	if(tmp){
+	   //有存档
+	   if(highestScore>tmp) CCUserDefault::sharedUserDefault()->setIntegerForKey("bestScoreData",highestScore);
+
+	}else{
+	   //没存档
+	   CCUserDefault::sharedUserDefault()->setIntegerForKey("bestScoreData",highestScore);
+	   //保存
+	   CCUserDefault::sharedUserDefault()->flush();
+	}
+}
+
+///////////////////////
 void HelloWorld::gameOver(){
 	this->unscheduleUpdate();//关闭每一帧的update
 	this->setTouchEnabled(false);//关闭屏幕触摸监听
@@ -332,7 +334,6 @@ void HelloWorld::gameOver(){
 		pAction=CCRotateTo::create(0.0f,90,90);
 	}else;
 	bird0_0->runAction(pAction);
-	
 	showScoreBoard();
 	score=0;//分数清零
 }
@@ -385,12 +386,22 @@ void HelloWorld::showScoreBoard(){
 		threeScore[2]=score;
 		rank=3;
 	}else rank=0;
-	if(score>highestScore) highestScore=score;
+
 	medal=CCSprite::create(CCString::createWithFormat("medals_%d.png",rank)->getCString());
 	medal->setPosition(ccp(origin.x+visibleSize.width/2-65,origin.y+visibleSize.height+100));
 	CCMoveTo* medalMoveTo=CCMoveTo::create(0.5f,ccp(origin.x+visibleSize.width/2-65,origin.y+visibleSize.height/2-5));
 	this->addChild(medal,1);
 	medal->runAction(medalMoveTo);	
+	//
+	if(score>highestScore){
+		highestScore=score;
+		saveBestScore();//更新存储最高分
+		CCSprite *newpng=CCSprite::create("new.png");
+		newpng->setPosition(ccp(origin.x+visibleSize.width/2+52,origin.y-100));
+		CCMoveTo* bestScoreMoveTo=CCMoveTo::create(0.5f,ccp(origin.x+visibleSize.width/2+52,origin.y+visibleSize.height/2-20));
+		this->addChild(newpng,1);
+		newpng->runAction(bestScoreMoveTo);
+	}
 	//最高分
 	bestScore=CCLabelTTF::create(CCString::createWithFormat("%d",highestScore)->getCString(),"Arial", 20);
 	bestScore->setPosition(ccp(origin.x+visibleSize.width/2+75,origin.y-100));
@@ -403,8 +414,6 @@ void HelloWorld::showScoreBoard(){
 	gameOverImage->setPosition(ccp(origin.x + visibleSize.width/2,origin.y + visibleSize.height/2+200));
 	this->addChild(gameOverImage,1);
 }
-//
-
 //重新游戏
 void HelloWorld::menuReplayCallback(CCObject* pSender){
 	firstTouch=false;
