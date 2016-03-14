@@ -1,7 +1,7 @@
 #include "HelloWorldScene.h"
 #include "StartScene.h"
 #include "SimpleAudioEngine.h"
-using namespace CocosDenshion;//±ØÐë#include "SimpleAudioEngine.h"
+using namespace CocosDenshion;
 USING_NS_CC;
 
 bool HelloWorld::firstTouch=false;
@@ -47,8 +47,7 @@ bool HelloWorld::init()
 
 	//tourial
 	tutorial=CCSprite::create("tutorial.png");
-	tutorial->setPosition(ccp(origin.x + visibleSize.width/2,
-                            origin.y + visibleSize.height/2-50));
+	tutorial->setPosition(ccp(origin.x + visibleSize.width/2,origin.y + visibleSize.height/2-50));
 	this->addChild(tutorial,0);
 	//Ð¡Äñ
     bird0_0 = CCSprite::create("bird0_0.png");
