@@ -1,7 +1,7 @@
 #include "StartScene.h"
 #include "HelloWorldScene.h"
 #include "SimpleAudioEngine.h"
-using namespace CocosDenshion;//±ØÐëÏÈ#include "SimpleAudioEngine.h"
+using namespace CocosDenshion;
 USING_NS_CC;
 CCScene* StartScene::scene()
 {
@@ -44,8 +44,7 @@ bool StartScene::init(){
                                         this,
                                         menu_selector(StartScene::menuSceneChangeCallback));
     
-	pSceneChangeItem->setPosition(ccp(origin.x + visibleSize.width/2,
-                                origin.y + visibleSize.height/4));
+	pSceneChangeItem->setPosition(ccp(origin.x + visibleSize.width/2,origin.y + visibleSize.height/4));
 
     // create menu, it's an autorelease object
     pMenu = CCMenu::create(pSceneChangeItem, NULL);
@@ -67,8 +66,7 @@ CCAnimate* StartScene::creatBirdAnimate(){
 	CCArray* frameArray=CCArray::create();
 
 	for(int i=0;i<iFrameNum;i++){
-		frame=CCSpriteFrame::create(CCString::createWithFormat("bird0_%d.png",i)->getCString(),
-									CCRectMake(0,0,48,48));
+		frame=CCSpriteFrame::create(CCString::createWithFormat("bird0_%d.png",i)->getCString(),CCRectMake(0,0,48,48));
 		frameArray->addObject(frame);
 	}
 	CCAnimation* animation=CCAnimation::createWithSpriteFrames(frameArray);
