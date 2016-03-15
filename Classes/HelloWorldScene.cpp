@@ -57,7 +57,7 @@ bool HelloWorld::init()
 	CCAnimate* swingAction=creatBirdAnimate();//扇动翅膀
 
 	pAction=CCSpawn::create(swingAction,NULL);//同时发生
-	bird0_0->runAction(pAction);
+	bird0_0->runAction(swingAction);
 
 	//管道
 	int firstdistance=200;//鸟起始点要距离管道远一点
@@ -119,7 +119,7 @@ CCAnimate* HelloWorld::creatBirdAnimate(){
 	}
 	CCAnimation* animation=CCAnimation::createWithSpriteFrames(frameArray);
 	animation->setLoops(-1);
-	animation->setDelayPerUnit(0.15f);
+	animation->setDelayPerUnit(0.2f);
 	CCAnimate* action=CCAnimate::create(animation);
 	return action;
 }
@@ -182,17 +182,16 @@ bool HelloWorld::ccTouchBegan(CCTouch* pTouch,CCEvent* pEvent){
 		firstTouch=true;
 		tutorial->removeFromParent();
 		text_ready->removeFromParent();
-		
 	}
 
-	CCMoveBy* moveby=CCMoveBy::create(0.16f,ccp(0,85));
+	CCMoveBy* moveby=CCMoveBy::create(0.12f,ccp(0,85));
 	CCEaseOut* easeout=CCEaseOut::create(moveby,1.5);
 	CCRotateTo* rotateto=CCRotateTo::create(0.05f,-30,-30);
 	CCEaseOut* easeout2=CCEaseOut::create(rotateto,1.5);
 	CCAnimate* swingAction=creatBirdAnimate();//扇动翅膀
 
 	pAction=CCSpawn::create(swingAction,easeout,easeout2,NULL);
-	bird0_0->runAction(pAction);
+	bird0_0->runAction(pAction);	
 	return true;
 }
 //屏幕触摸移动
@@ -201,7 +200,6 @@ void HelloWorld::ccTouchMoved(CCTouch* pTouch,CCEvent* pEvent){
 }
 //屏幕触摸结束
 void HelloWorld::ccTouchEnded(CCTouch* pTouch,CCEvent* pEvent){
-
 	bird0_0->stopAction(pAction);
 	CCMoveTo* moveto=CCMoveTo::create(1.2f,ccp(bird0_0->getPositionX(),-210));
 	CCEaseIn* easein=CCEaseIn::create(moveto,2.4f);

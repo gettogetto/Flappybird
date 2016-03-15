@@ -18,6 +18,6 @@ private:
 	CCSprite* background;
 	CCMenuItemImage *pSceneChangeItem;
 	CCMenu* pMenu;
-	CCActionInterval* pAction;
+	//CCActionInterval* pAction;
 };
 #endif//StartScene.h

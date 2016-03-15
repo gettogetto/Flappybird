@@ -56,8 +56,17 @@ bool StartScene::init(){
 	this->addChild(bird0_0,1);
 
 	CCAnimate* swingAction=creatBirdAnimate();//扇动翅膀
-	pAction=CCSpawn::create(swingAction,NULL);//同时发生
-	bird0_0->runAction(pAction);
+	//CCMoveBy* moveby1=CCMoveBy::create(0.8f,ccp(0,16));
+	//CCMoveBy* moveby2=CCMoveBy::create(0.8f,ccp(0,-16));
+
+	//pAction=CCSpawn::create(swingAction,NULL);//同时发生
+
+	//CCActionInterval* updown=CCSequence::create(moveby1,moveby2,swingAction,NULL);
+
+	//CCActionInterval* upAndDownForever=CCRepeatForever::create(updown);
+	
+	bird0_0->runAction(swingAction);
+
 	return true;
 }
 CCAnimate* StartScene::creatBirdAnimate(){
@@ -71,7 +80,7 @@ CCAnimate* StartScene::creatBirdAnimate(){
 	}
 	CCAnimation* animation=CCAnimation::createWithSpriteFrames(frameArray);
 	animation->setLoops(-1);
-	animation->setDelayPerUnit(0.15f);
+	animation->setDelayPerUnit(0.2f);
 	CCAnimate* action=CCAnimate::create(animation);
 	return action;
 }
